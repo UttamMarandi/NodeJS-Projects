@@ -21,7 +21,7 @@ app.use("/api/v1/tasks", tasks);
 
 const start = async () => {
   try {
-    await connectDB(process.env.MONGO_STRING);
+    connectDB(process.env.MONGO_STRING);
     console.log("db connect");
     app.listen(3000, console.log(`Server is listening on port 3000`));
   } catch (err) {
@@ -30,5 +30,6 @@ const start = async () => {
 };
 
 start();
+//first we connect to db , then we start the server
 
 //Rest stands for representational state transfer

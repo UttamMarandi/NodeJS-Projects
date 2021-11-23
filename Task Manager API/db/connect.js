@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const connectDB = (url) => {
-  mongoose.connect(url, {
+const connectDB = async (url) => {
+  await mongoose.connect(url, {
     useNewUrlParser: true, //this object to remove depreciation warning
     useCreateIndex: true,
     useFindAndModify: false,
