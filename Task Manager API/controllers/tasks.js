@@ -5,6 +5,7 @@ const getAllTasks = async (req, res) => {
   const tasks = await Task.find({});
   res.status(200).json({ tasks });
   //both with {tasks} and tasks will get a response. with {tasks} we also get the collection name , but with tasks without curly braces we get an array of objects only.
+  //{tasks} is good for getting data using destruturing in front end
 };
 
 const createTask = async (req, res) => {
