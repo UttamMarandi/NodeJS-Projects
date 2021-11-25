@@ -20,7 +20,3 @@ module.exports = mongoose.model("Task", TaskSchema);
 //Instance of a model is called a document
 //only the keys that is defined in schema is passed to db , others are discarder
 //in this case it is "name" and "completed"
-
-//patch means partial update ..so if any of the keys is not passed for updation than previous values will take it's place
-//put means overwriting to update..so if any of the keys is not passed for updation than values for that key are lost including prvious values.
-//but put does not work like abpve automatically, for "put" to work like that we need set another key in options property i.e overwrite:true.

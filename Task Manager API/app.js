@@ -2,7 +2,10 @@ const express = require("express");
 const app = express();
 const tasks = require("./routes/tasks");
 const connectDB = require("./db/connect");
+const notFound = require("./middleware/not-found");
+const errorHandlerMiddleware = require("./middleware/error-handler");
 require("dotenv").config();
+
 //middleware
 app.use(express.static("./public")); //to serve static files
 app.use(express.json());
@@ -13,6 +16,15 @@ app.use(express.json());
 // });
 
 app.use("/api/v1/tasks", tasks);
+
+//order of app.use matters
+//app.use("/api/v1/tasks", tasks) must be defined above of <code>app.use(notFound); </code>.
+//so custom 404 gets applied to all the routes except for routes defined above it.
+//in that case 404 should be inserted at the bottom of the file.
+//custom 404
+app.use(notFound);
+app.use(errorHandlerMiddleware);
+//no path is mentioned , so middleware gets applied to all the routes.
 
 // app.get("/api/v1/tasks"); //get all the tasks
 // app.post("/api/v1/tasks"); //create a new task
