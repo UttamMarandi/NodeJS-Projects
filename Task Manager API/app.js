@@ -32,11 +32,12 @@ app.use(errorHandlerMiddleware);
 // app.patch("/api/v1/tasks/:id"); //update task
 // app.delete("/api/v1/tasks/:id"); //delete task
 
+const port = process.env.PORT || 3000;
 const start = async () => {
   try {
     connectDB(process.env.MONGO_STRING);
     console.log("db connect");
-    app.listen(3000, console.log(`Server is listening on port 3000`));
+    app.listen(port, console.log(`Server is listening on port 3000`));
   } catch (err) {
     console.log(err);
   }

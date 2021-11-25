@@ -1,6 +1,7 @@
 //controllers : business logic
 const Task = require("../models/Task");
 const asyncWrapper = require("../middleware/async");
+const { createCustomError } = require("../errors/custom-error");
 
 const getAllTasks = asyncWrapper(async (req, res) => {
   //asyncWrapper provides try and catch block
@@ -23,9 +24,11 @@ const getTask = asyncWrapper(async (req, res, next) => {
   const task = await Task.findOne({ _id: taskID }); //check if _id in db is same as the taskID we send
 
   if (!task) {
-    const error = new Error("Cannot get the task UT");
-    error.status = 404;
-    return next(error);
+    return next(createCustomError(`No task with id : ${taskID}`, 404));
+    //this is done manually , but we are creating a CustomAPIError class that extends error class to handle these errors.
+    // const error = new Error("Cannot get the task UT"); //creating custom error
+    // error.status = 404;
+    // return next(error);
     // return res.status(404).json({ msg: `No task  with the id: ${taskID}` }); //if id syntax right , then 404 error
     //if id syntax wrong meaning no. of charecters in id more or less than required values, then generic 500 error
     //_id contains 24 characters
@@ -37,7 +40,8 @@ const deleteTask = asyncWrapper(async (req, res) => {
   const { id: taskID } = req.params;
   const task = await Task.findOneAndDelete({ _id: taskID });
   if (!task) {
-    return res.status(404).json({ msg: `No task  with the id: ${taskID}` }); //if id syntax right , then 404 error
+    return next(createCustomError(`No task with id : ${taskID}`, 404));
+    // return res.status(404).json({ msg: `No task  with the id: ${taskID}` }); //if id syntax right , then 404 error
   }
   res.status(200).json({ task });
 });
@@ -50,7 +54,8 @@ const updateTask = asyncWrapper(async (req, res) => {
   });
   //findOneAndUpdate takes 3 parameters. { _id: taskID } checks for the document that needs to be deleted. req.body contains the data which should be updataed. third parameter takes an object which if new sets to true than updated data will be send as response. if runValidators set to true , than validators applied in Task Model will get applied.
   if (!task) {
-    return res.status(404).json({ msg: `No task  with the id: ${taskID}` }); //if id syntax right , then 404 error
+    return next(createCustomError(`No task with id : ${taskID}`, 404));
+    // return res.status(404).json({ msg: `No task  with the id: ${taskID}` }); //if id syntax right , then 404 error
   }
   res.status(200).json({ task }); //we need req.body b.c we want to send the updated data to client
 });
