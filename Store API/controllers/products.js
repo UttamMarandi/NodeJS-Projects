@@ -1,7 +1,8 @@
 const Product = require("../models/product");
 
 const getAllProductsStatic = async (req, res) => {
-  const products = await Product.find({ featured: true })
+  const products = await Product.find({ featured: true, price: { $gt: 40 } })
+    //$gt i.e greater than #numericFilters,only price greater than 40 will be shown
     .sort("name price")
     .select("name price")
     .limit(4)
@@ -17,7 +18,7 @@ const getAllProductsStatic = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  const { featured, company, name, sort, fields } = req.query;
+  const { featured, company, name, sort, fields, numericFilters } = req.query;
   const queryObject = {};
   if (featured) {
     //it works even if featured is set as false by default
@@ -68,6 +69,36 @@ const getAllProducts = async (req, res) => {
   //skip(14) we skip 14 items
   //then show 7 items #3rd page
 
+  //numericFilters
+  if (numericFilters) {
+    console.log(numericFilters);
+    const operatorMap = {
+      ">": "$gt",
+      ">=": "$gte",
+      "=": "$eq",
+      "<": "$lt",
+      "<=": "$gte",
+    };
+    const regEx = /\b(<|>|>=|=|<=)\b/g;
+    //g flag means multiple matches are allowed
+    let filters = numericFilters.replace(
+      regEx,
+      (match) => `-${operatorMap[match]}-` //if match is found on string then replace it with operatorMap[match] value
+    );
+    console.log("filters", filters);
+    const options = ["price", "rating"];
+    filters = filters.split(",").forEach((item) => {
+      const [field, operator, value] = item.split("-"); //here we are splitting and destructuring each filter option ex:price-$gt-40
+      //first value is filter field , second is operator and third is value
+      if (options.includes(field)) {
+        //we allow only price and rating numeric filters
+        queryObject[field] = { [operator]: Number(value) }; //this is the syntac for numeric filters
+      }
+      console.log("queryObject", queryObject);
+    });
+    result = result.find(queryObject);
+  }
+
   const products = await result; //this is where we will use await
   res.status(200).json({ products, nbhits: products.length });
 };
@@ -76,3 +107,6 @@ module.exports = {
   getAllProducts,
   getAllProductsStatic,
 };
+
+//Regular Expressions
+//Regular Expressions are used to perform powerful pattern matching and search-and-replace functions on text
