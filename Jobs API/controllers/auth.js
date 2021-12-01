@@ -9,12 +9,14 @@ const register = async (req, res) => {
     throw new BadRequestError("Please provide email name and password");
   }
   //double checking
+  const user = await User.create({ ...req.body });
 
-  const salt = await bycrypt.genSalt(10);
-  const hashedPassword = await bycrypt.hash(password, salt);
-  const tempUser = { name: name, email, password: hashedPassword };
+  //Refactored
+  // const salt = await bycrypt.genSalt(10);
+  // const hashedPassword = await bycrypt.hash(password, salt);
+  // const tempUser = { name: name, email, password: hashedPassword };
 
-  const user = await User.create({ ...tempUser });
+  // const user = await User.create({ ...tempUser });
   //passing create(req.body) and create({...req.body}) is the same thing, but in latter portion we can add additional content
   res.status(StatusCodes.CREATED).json({ user });
 };
