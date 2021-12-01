@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bycrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -36,5 +37,17 @@ UserSchema.pre("save", async function (next) {
   //the above code runs just before the "create" functionality of mongoose. so we are sending req.body through our model to save in db. but in model we run a pre function which fetched the current password , hashed it and then store it in password.
   //then the hooked method User.create() runs saving the data to db.
 });
+
+UserSchema.methods.getName = function () {
+  return this.name;
+};
+//this is one of the way to keep the logic in model. just invoke the getName() in controller and we will get the user name
+//not used in current project
+
+UserSchema.methods.createJWT = function () {
+  return jwt.sign({ userId: this._id, name: this.name }, "jwt", {
+    expiresIn: "30d",
+  });
+};
 
 module.exports = mongoose.model("User", UserSchema);

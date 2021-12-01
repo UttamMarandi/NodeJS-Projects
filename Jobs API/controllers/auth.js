@@ -1,7 +1,8 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError } = require("../errors");
-const bycrypt = require("bcryptjs");
+
+const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -11,6 +12,15 @@ const register = async (req, res) => {
   //double checking
   const user = await User.create({ ...req.body });
 
+  //jwt
+  //in model logic
+  const token = user.createJWT();
+
+  //in controller logic
+  // const token = jwt.sign({ userId: user._id, name: user.name }, "jwt", {
+  //   expiresIn: "30d",
+  // });
+
   //Refactored
   // const salt = await bycrypt.genSalt(10);
   // const hashedPassword = await bycrypt.hash(password, salt);
@@ -18,7 +28,8 @@ const register = async (req, res) => {
 
   // const user = await User.create({ ...tempUser });
   //passing create(req.body) and create({...req.body}) is the same thing, but in latter portion we can add additional content
-  res.status(StatusCodes.CREATED).json({ user });
+  res.status(StatusCodes.CREATED).json({ user: { name: user.name }, token });
+  //we can send the entire user too : not recommended , send only that you require
 };
 
 const login = async (req, res) => {
