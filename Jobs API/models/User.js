@@ -34,7 +34,7 @@ UserSchema.pre("save", async function (next) {
   this.password = await bycrypt.hash(this.password, salt);
   next();
 
-  //the above code runs just before the "create" functionality of mongoose. so we are sending req.body through our model to save in db. but in model we run a pre function which fetched the current password , hashed it and then store it in password.
+  //the above code runs just before the "create" functionality of mongoose. so we are sending req.body through our model to save in db. but in model we run a pre function which fetched the current password , hashed it and then store it as password.
   //then the hooked method User.create() runs saving the data to db.
 });
 
@@ -45,9 +45,18 @@ UserSchema.methods.getName = function () {
 //not used in current project
 
 UserSchema.methods.createJWT = function () {
-  return jwt.sign({ userId: this._id, name: this.name }, "jwt", {
-    expiresIn: "30d",
-  });
+  return jwt.sign(
+    { userId: this._id, name: this.name },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_LIFETIME,
+    }
+  );
+};
+
+UserSchema.methods.comparePassword = async function (passByUser) {
+  const isMatch = await bycrypt.compare(passByUser, this.password);
+  return isMatch;
 };
 
 module.exports = mongoose.model("User", UserSchema);
