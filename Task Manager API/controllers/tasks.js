@@ -52,7 +52,7 @@ const updateTask = asyncWrapper(async (req, res) => {
     new: true,
     runValidators: true,
   });
-  //findOneAndUpdate takes 3 parameters. { _id: taskID } checks for the document that needs to be deleted. req.body contains the data which should be updataed. third parameter takes an object which if new sets to true than updated data will be send as response. if runValidators set to true , than validators applied in Task Model will get applied.
+  //findOneAndUpdate takes 3 parameters. { _id: taskID } checks for the document that needs to be updated. req.body contains the data which should be updataed. third parameter takes an object which if new sets to true than updated data will be send as response. if runValidators set to true , than validators applied in Task Model will get applied.
   if (!task) {
     return next(createCustomError(`No task with id : ${taskID}`, 404));
     // return res.status(404).json({ msg: `No task  with the id: ${taskID}` }); //if id syntax right , then 404 error

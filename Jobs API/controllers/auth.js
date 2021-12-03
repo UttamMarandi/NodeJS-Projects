@@ -6,9 +6,9 @@ const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
-  if (!name || !email || !password) {
-    throw new BadRequestError("Please provide email name and password");
-  }
+  // if (!name || !email || !password) {
+  //   throw new BadRequestError("Please provide email name and password");
+  // }
   //double checking
   const user = await User.create({ ...req.body });
 

@@ -11,7 +11,7 @@ const getJob = async (req, res) => {
   const {
     user: { userId },
     params: { id: jobId },
-  } = req; //nester destructuring
+  } = req; //nested destructuring
   //same as
   // const { userId } = req.user;
   // const { id: jobId } = req.params;
@@ -51,7 +51,14 @@ const updateJob = async (req, res) => {
 };
 
 const deleteJob = async (req, res) => {
-  res.send("delete job");
+  const { userId } = req.user;
+  const { id: jobId } = req.params;
+
+  const job = await Job.findOneAndRemove({ _id: jobId, createdBy: userId });
+  if (!job) {
+    throw new NotFoundError(`No job with id ${jobId}`);
+  }
+  res.status(StatusCodes.OK).json({ msj: "Delete Successful" });
 };
 
 module.exports = {
