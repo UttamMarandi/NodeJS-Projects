@@ -22,6 +22,11 @@ const JobSchema = new mongoose.Schema(
       ref: "User", //collection name is User
       required: [true, "Please provide user"],
     },
+    createByName: {
+      type: String,
+      ref: "User",
+      required: [true, "Created by Name not provided"],
+    },
   },
   { timestamps: true }
 );

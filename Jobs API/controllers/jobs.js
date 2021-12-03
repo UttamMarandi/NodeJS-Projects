@@ -8,18 +8,37 @@ const getAllJobs = async (req, res) => {
 };
 
 const getJob = async (req, res) => {
-  res.send("getJob");
+  const {
+    user: { userId },
+    params: { id: jobId },
+  } = req; //nester destructuring
+  //same as
+  // const { userId } = req.user;
+  // const { id: jobId } = req.params;
+  const job = await Job.findOne({ _id: jobId, createdBy: userId });
+  if (!job) {
+    throw new NotFoundError(`No job with id ${jobId}`);
+  }
+  res.status(StatusCodes.OK).json({ job });
 };
 
 const createJob = async (req, res) => {
-  req.body.createdBy = req.user.userId; //we want the userId we got from token to be stored with the Job
+  req.body.createdBy = req.user.userId; //we want the userId we got from token to be stored with the Job,
+  req.body.createByName = req.user.name;
   const job = await Job.create({ ...req.body });
   res.status(StatusCodes.CREATED).json({ job });
   // res.json(req.user); //we are getting req.user from authentiaction middleware
 };
 
 const updateJob = async (req, res) => {
-  res.send("updateJob");
+  const {
+    body: { company, position },
+    user: { userId },
+    params: { id: jobId },
+  } = req;
+  if (!company || !position) {
+    throw new BadRequestError("Company or Position fields cannot be empty");
+  }
 };
 
 const deleteJob = async (req, res) => {
